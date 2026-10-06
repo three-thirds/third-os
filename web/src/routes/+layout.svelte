@@ -11,4 +11,5 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<div class="grain" aria-hidden="true"></div>
 {@render children()}
