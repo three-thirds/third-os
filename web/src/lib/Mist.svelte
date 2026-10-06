@@ -14,7 +14,7 @@
 <h1 class=" font-doto {cls}" aria-label={text}>
     {#if delays.length}
         {#each chars as c,i}
-            <span aria-hidden="true" class="inline-block animate-mist motion-reduce:animate-none" style="animation-delay:{delays[i]}ms">
+            <span aria-hidden="true" class="inline-block animate-mist" style="animation-delay:{delays[i]}ms">
                 {c  === ' ' ? '\u00A0' : c}
             </span>
         {/each}
