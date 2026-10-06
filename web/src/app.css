@@ -1,0 +1,9 @@
+@import "tailwind";
+
+@theme {
+    --font-doto: 'Doto', monospace;
+    --animate-mist: mist 1.8s cubic-bezier(0.2,0.6,2,1) both;
+    --animate-drift: drift 24s ease-in-out infinite alternate;
+}
+
+body { background: #050505; color: #fff; }
