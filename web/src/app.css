@@ -14,6 +14,65 @@
         from { transform: translate(-6%, -4%) scale(1);}
         to { transform: translate(6%, 4%) scale(1.16); }
     }
+    
+    --color-rich-mahogany: #3c1518;
+    --color-rich-mahogany-100: #0c0405;
+    --color-rich-mahogany-200: #18080a;
+    --color-rich-mahogany-300: #240d0f;
+    --color-rich-mahogany-400: #301114;
+    --color-rich-mahogany-500: #3c1518;
+    --color-rich-mahogany-600: #7c2b32;
+    --color-rich-mahogany-700: #bb424c;
+    --color-rich-mahogany-800: #d28087;
+    --color-rich-mahogany-900: #e9c0c3;
+
+    --color-dark-garnet: #69140e;
+    --color-dark-garnet-100: #150403;
+    --color-dark-garnet-200: #290806;
+    --color-dark-garnet-300: #3e0c08;
+    --color-dark-garnet-400: #53100b;
+    --color-dark-garnet-500: #69140e;
+    --color-dark-garnet-600: #ac2118;
+    --color-dark-garnet-700: #e33c30;
+    --color-dark-garnet-800: #ec7d75;
+    --color-dark-garnet-900: #f6beba;
+
+    --color-rust-brown: #a44200;
+    --color-rust-brown-100: #210d00;
+    --color-rust-brown-200: #411a00;
+    --color-rust-brown-300: #622700;
+    --color-rust-brown-400: #833400;
+    --color-rust-brown-500: #a44200;
+    --color-rust-brown-600: #e95d00;
+    --color-rust-brown-700: #ff822f;
+    --color-rust-brown-800: #ffac74;
+    --color-rust-brown-900: #ffd5ba;
+
+    --color-bronze: #d58936;
+    --color-bronze-100: #2c1b09;
+    --color-bronze-200: #583613;
+    --color-bronze-300: #83511c;
+    --color-bronze-400: #af6c25;
+    --color-bronze-500: #d58936;
+    --color-bronze-600: #dd9f5d;
+    --color-bronze-700: #e5b786;
+    --color-bronze-800: #eecfae;
+    --color-bronze-900: #f6e7d7;
+
+    /* --color-vanilla-custard: #f2f3ae;
+    --color-vanilla-custard-100: #48490b;
+    --color-vanilla-custard-200: #8f9216;
+    --color-vanilla-custard-300: #d7da21;
+    --color-vanilla-custard-400: #e6e866;
+    --color-vanilla-custard-500: #f2f3ae;
+    --color-vanilla-custard-600: #f5f5bf;
+    --color-vanilla-custard-700: #f7f8cf;
+    --color-vanilla-custard-800: #fafadf;
+    --color-vanilla-custard-900: #fcfdef; */
+
 }
 
-body { background: #050505; color: #fff; }
+body {
+    background: var(--color-rich-mahogany-200);
+    color: var(--color-bronze-700)
+}
