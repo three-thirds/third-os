@@ -1,28 +1,30 @@
+OUTPUT_FORMAT(elf32-i386)
+OUTPUT_ARCH(i386)
 ENTRY(loader)
 
 SECTIONS {
-  . = 0x00100000; /* this code should only load at 1MB*/
+  . = 0x00100000;
 
-  .text ALIGN(0x1000): /*align at 4kb */
-  {
-    *(.text)  /* all text from all files */
+  .text ALIGN(4K) : {
+    KEEP(*(.multiboot))
+    *(.text .text.*)
   }
 
-  .rodata ALIGN(0x1000):
-  {
-    *(.rodata)
+  .rodata ALIGN(4K) : {
+    *(.rodata .rodata.*)
   }
 
-  .data ALIGN(0x1000):
-  {
-    *(.data)
+  .data ALIGN(4K) : {
+    *(.data .data.*)
   }
 
-  .bss ALIGN(0x1000):
-  {
-    *(.COMMON)
-    *(.bss)
+  .bss ALIGN(4K) : {
+    *(COMMON)
+    *(.bss .bss.*)
   }
 
-
+  /DISCARD/ : {
+    *(.comment)
+    *(.note*)
+  }
 }
