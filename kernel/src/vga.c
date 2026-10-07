@@ -1,4 +1,6 @@
 #include "vga.h"
+#include "io.h"
+#include <stdint.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -61,6 +63,17 @@ void vga_clear(void)
     }
 }
 
+void vga_update_cursor()
+{
+    uint16_t pos = cursor_row * VGA_WIDTH + cursor_col;
+
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t)(pos & 0xFF));
+
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+}
+
 void vga_putc(char c)
 {
     if (c == '\n') {
@@ -68,12 +81,22 @@ void vga_putc(char c)
         if (++cursor_row == VGA_HEIGHT) {
             vga_scroll();
         }
+        vga_update_cursor();
         return;
     }
 
     if (c == '\r') {
         cursor_col = 0;
         return;
+    }
+
+    if (c == '\b') {
+        if (cursor_col > 0) {
+            cursor_col--;
+            terminal_buffer[cursor_row * VGA_WIDTH + cursor_col] =
+                vga_entry(' ', terminal_color);
+            vga_update_cursor();
+        }
     }
 
     terminal_buffer[cursor_row * VGA_WIDTH + cursor_col] =
@@ -85,6 +108,8 @@ void vga_putc(char c)
             vga_scroll();
         }
     }
+
+    vga_update_cursor();
 }
 
 void vga_write(const char *data, size_t length)
