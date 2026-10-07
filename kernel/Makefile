@@ -1,12 +1,20 @@
 # Linux hosts typically use gcc + binutils ld.
 # On Windows/MSYS2, the native gcc/ld emit PE, so use clang + lld for ELF32.
 ifeq ($(OS),Windows_NT)
-  CC := clang  CC := clangQEMU := qemy-system-i386
+  CC := clang
   LD := ld.lld
   CFLAGS_TARGET := --target=i386-elf
 else
+  CC := gcc
+  LD := ld
+  CFLAGS_TARGET :=
+endif
 
-CFLAGS  := -m32 \
+AS := nasm
+QEMU := qemu-system-i386
+
+CFLAGS  := $(CFLAGS_TARGET) \
+           -m32 \
            -ffreestanding \
            -fno-builtin \
            -fno-stack-protector \
@@ -16,30 +24,28 @@ CFLAGS  := -m32 \
            -Iinclude
 
 ASFLAGS := -f elf32
-LDFLAGS := -m elf_i386 -T link.ld -nostdlib
+LDFLAGS := -m elf_i386 -T linker.ld -nostdlib --entry=loader
 
-C_SRCS := $(wildcard *.c) $(wildcard src/*.c)
+C_SRCS := $(wildcard src/*.c)
 C_OBJS := $(C_SRCS:.c=.o)
 
-ASM_SRCS := $(wildcard *.s) $(wildcard src/*.s)
+ASM_SRCS := $(wildcard arch/x86/*.s)
 ASM_OBJS := $(ASM_SRCS:.s=.o)
 
 KERNEL := kernel.elf
 ISO := os.iso
 
-.PHONY := all run run-iso iso clean
+.PHONY: all run run-iso iso clean
 
 all: $(KERNEL)
 
 $(KERNEL): $(ASM_OBJS) $(C_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
-# Assemble NASM files
-%.o: %.s
+arch/x86/%.o: arch/x86/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-# Compile C files
-%.o: %.c
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 iso: $(ISO)
@@ -64,4 +70,4 @@ run-iso: $(ISO)
 	$(QEMU) -cdrom $(ISO) -display gtk
 
 clean:
-	rm -f $(KERNEL) $(ISO) *.o src/*.o arch/x86/*.o iso/boot/kernel.elf
+	rm -f $(KERNEL) $(ISO) $(C_OBJS) $(ASM_OBJS) iso/boot/kernel.elf
