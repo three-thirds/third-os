@@ -2,7 +2,7 @@
     import { onMount } from "svelte"
     import gsap from 'gsap'
 
-    let { count = 70, onDone}: { count?: number; onDone?: () => void } = $props();
+    let { count = 70, onDone, onPanic}: { count?: number; onDone?: () => void; onPanic?: () => void} = $props();
 
     let box: HTMLElement;
     //mabye acually make the colors good future me idk
@@ -62,7 +62,8 @@
 
 <div bind:this={box} class="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
   {#each { length: count } as _}
-    <div class="leaf absolute top-0 opacity-0">
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+    <div class="leaf absolute top-0 opacity-0 pointer-events-auto p-2">
       <svg class="inner size-full" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2C6 6 4 12 6 18c2 3 5 4 6 4s4-1 6-4c2-6 0-12-6-16z" />
         <path d="M12 22V8" stroke="#0c0405" stroke-opacity=".35" stroke-width=".8" fill="none" />
