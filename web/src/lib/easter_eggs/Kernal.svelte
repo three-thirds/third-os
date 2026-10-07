@@ -14,7 +14,7 @@
     onMount(() => {
         QRCode.toDataURL(url, {
             width: 500,
-            margin: 0,
+            margin: 2,
             errorCorrectionLevel: 'L',
             color: { dark: '#0000aa', light: '#ffffff' }
         }).then((data) => (qr = data))
@@ -24,13 +24,21 @@
     })
 </script>
 
-<div class="fixed inset-0 z-100 bg-[#0000aa] p-6 font-mono text-[#f7f7fc]">
-      <pre class="absolute left-6 top-4 text-[10px] leading-[1.05]">{tux}</pre>
-      <div class="flex h-full clex-col items-center justify-center gap-8 py-6 text-center">
-        <img src={qr} alt="QR code" class="bg-white" style="width: min(62vh, 85vw); aspect-ratio: 1; image-rendering: pixelated;"/>
-      </div>
-      <div class="space-y-3 text-sm md:text-base">
-        <p class="font-bold">KERNAL PANIC!</p>
-        <p class="font-bold"></p>
-      </div>
+<div class="fixed inset-0 z-100 overflow-hidden bg-[#0000aa] p-6 font-mono text-[#f7f7fc]">
+  <pre class="absolute left-6 top-4 text-[10px] leading-[1.05]">{tux}</pre>
+
+  <div class="flex h-full flex-col items-center justify-center gap-8 py-6 text-center">
+    {#if qr}
+      <img
+        src={qr}
+        alt="QR code"
+        style="width: min(55vh, 85vw); aspect-ratio: 1; image-rendering: pixelated;"
+      />
+    {/if}
+
+    <div class="space-y-3 text-sm md:text-base">
+      <p class="font-bold">KERNEL PANIC!</p>
+      <p>{roast}</p>
+    </div>
+  </div>
 </div>
