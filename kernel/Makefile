@@ -24,7 +24,7 @@ ASM_OBJS := $(ASM_SRCS:.s=.o)
 KERNEL := kernel.elf
 ISO := os.iso
 
-.PHONY := all run run-iso iso clean
+.PHONY := all run run-iso iso bochs clean
 
 all: $(KERNEL)
 
@@ -60,5 +60,7 @@ run: $(KERNEL)
 run-iso: $(ISO)
 	$(QEMU) -cdrom $(ISO) -display gtk
 
+bochs: $(ISO)
+	bochs -f bochsrc.txt -q
 clean:
 	rm -f $(KERNEL) $(ISO) *.o src/*.o arch/x86/*.o iso/boot/kernel.elf
