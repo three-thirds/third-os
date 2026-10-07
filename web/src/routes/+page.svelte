@@ -16,6 +16,7 @@
 />
 
 {#if phase === 'intro'}
+    <div class="grain" aria-hidden="true" out:fade={{ duration: 800 }}></div>
     <main class="fixed inset-0 grid place-items-center overflow-hidden" out:blur={{ amount: 16, duration: 1100 }}>
 
         <div class="pointer-events-none absolute inset-0" aria-hidden="true">

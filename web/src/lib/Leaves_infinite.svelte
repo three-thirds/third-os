@@ -48,7 +48,7 @@
                         duration: duration/4,
                         ease: 'sine.inOut',
                         yoyo: true,
-                        repeat: 3,
+                        repeat: -1,
                     }
                 )
             })
