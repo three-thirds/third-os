@@ -36,5 +36,3 @@
 {#if panic}
     <Kernal />
 {/if}
-
-<Kernal />
