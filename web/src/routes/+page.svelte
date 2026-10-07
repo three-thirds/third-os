@@ -15,7 +15,7 @@
     onkeydown={() => phase === 'intro' && !panic && enter()} 
 />
 
-{#if phase === 'intro'}
+<!-- {#if phase === 'intro'}
     <main class="fixed inset-0 grid place-items-center overflow-hidden" out:blur={{ amount: 16, duration: 1100 }}>
 
         <div class="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -35,4 +35,6 @@
 
 {#if panic}
     <Kernal />
-{/if}
+{/if} -->
+
+<Kernal />
