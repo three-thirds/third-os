@@ -16,15 +16,13 @@
         const H = innerHeight;
 
         const ctx = gsap.context(() => {
-            const tl = gsap.timeline({ onComplete: () => onDone?.() });
 
-            gsap.utils.toArray<HTMLElement>('.leaf').forEach((leaf) => {
+            gsap.utils.toArray<HTMLElement>('.ileaf').forEach((leaf) => {
                 const inner = leaf.querySelector('.inner') as HTMLElement;
                 //size thing the original was 14, 40 for @Willgob to remember. 
                 const size = r(24, 50);
-                const far = size < 22;
-                const duration = far ? r(6,9): r(4,7);
-                const start = r(0,5)
+                const far = size < 26;
+                const duration = far ? r(14,22): r(9,15);
 
                 gsap.set(leaf, {
                     left: `${r(-5,100)}%`,
@@ -33,15 +31,15 @@
                     width: size,
                     height: size,
                     color: gsap.utils.random(colors),
-                    opacity: far ? r(0.2,0.5) : r(0.5,1),
+                    opacity: far ? r(0.15,0.35) : r(0.35,0.7),
                     filter: far ? 'blur(1.5px)' : 'none'
                 })
                 gsap.set(inner, { transformPerspective: 500})
 
-                tl.to(leaf, { y: H + 80, duration: duration, ease: 'none', repeat: -1, onRepeat: () => gsap.set(leaf, { left: `${r(-5,100)}%`})}).progress(Math.random());
+                gsap.to(leaf, { y: H + 80, duration: duration, ease: 'none', repeat: -1, onRepeat: () => gsap.set(leaf, { left: `${r(-5,100)}%`})}).progress(Math.random());
 
                 const dir = Math.random() < 0.5 ? -1 : 1;
-                tl.to(inner,
+                gsap.to(inner,
                     {
                         x: r(50, 130) * dir,
                         rotation: r(-100, 100),
@@ -51,8 +49,7 @@
                         ease: 'sine.inOut',
                         yoyo: true,
                         repeat: 3,
-                    },
-                    start
+                    }
                 )
             })
         }, box)
@@ -66,7 +63,7 @@
 <div bind:this={box} class="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
   {#each { length: count } as _}
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-    <div class="leaf absolute top-0 opacity-0 pointer-events-auto p-2" onclick={(e) => { console.log('bleh panic now'); e.stopPropagation(); onPanic?.() }}>
+    <div class="ileaf absolute opacity-0">
       <svg class="inner size-full" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2C6 6 4 12 6 18c2 3 5 4 6 4s4-1 6-4c2-6 0-12-6-16z" />
         <path d="M12 22V8" stroke="#0c0405" stroke-opacity=".35" stroke-width=".8" fill="none" />
