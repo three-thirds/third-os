@@ -23,6 +23,9 @@ SECTIONS {
     *(.bss .bss.*)
   }
 
+  /* First byte after the kernel image (used by the PMM). */
+  kernel_end = .;
+
   /DISCARD/ : {
     *(.comment)
     *(.note*)

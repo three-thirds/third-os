@@ -2,6 +2,9 @@
 #include "idt.h"
 #include "io.h"
 #include "keyboard.h"
+#include "kmalloc.h"
+#include "multiboot.h"
+#include "pmm.h"
 #include "rtc.h"
 #include "timer.h"
 #include "vga.h"
@@ -48,13 +51,15 @@ static void prompt(void)
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK));
 }
 
-void kmain(void)
+void kmain(uint32_t magic, struct multiboot_info *mbi)
 {
     char line[LINE_MAX];
     size_t len;
     char c;
     struct rtc_time now;
     uint32_t calibrated;
+    uint8_t *probe;
+    int i;
 
     cli();
 
@@ -62,33 +67,52 @@ void kmain(void)
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK));
     vga_puts("Third OS\n");
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK));
-    vga_puts("PIT timer + RTC extras.\n");
+
+    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        vga_puts("bad multiboot magic\n");
+        for (;;) {
+            hlt();
+        }
+    }
 
     gdt_init();
     idt_init();
     timer_init();
     rtc_init();
+    pmm_init(mbi);
+    kmalloc_init();
     keyboard_init();
     timer_hook_register(tick_hook);
 
     sti();
 
-    timer_sleep_ms(500);
+    vga_puts("mem: free_frames=");
+    put_u32(pmm_free_frames());
+    vga_puts(" heap=");
+    put_u32(kmalloc_heap_size());
+    vga_putc('\n');
+
+    probe = (uint8_t *)kmalloc(64);
+    if (probe == 0) {
+        vga_puts("kmalloc failed\n");
+    } else {
+        for (i = 0; i < 64; i++) {
+            probe[i] = (uint8_t)(0xA0 + i);
+        }
+        vga_puts("kmalloc ok used=");
+        put_u32(kmalloc_used_bytes());
+        vga_putc('\n');
+    }
+
+    timer_sleep_ms(200);
+    calibrated = timer_calibrate();
+    rtc_read(&now);
+
     vga_puts("ticks=");
     put_u32(timer_ticks());
-    vga_puts(" ms=");
-    put_u32(timer_ms());
-    vga_puts(" hooks=");
-    put_u32(hook_hits);
-    vga_putc('\n');
-
-    calibrated = timer_calibrate();
-    vga_puts("calibrated_hz=");
+    vga_puts(" hz=");
     put_u32(calibrated);
-    vga_putc('\n');
-
-    rtc_read(&now);
-    vga_puts("rtc=");
+    vga_puts(" rtc=");
     put_u8_2(now.year);
     vga_putc('-');
     put_u8_2(now.month);
