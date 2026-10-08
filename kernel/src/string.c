@@ -44,3 +44,56 @@ void *memcpy(void *dest, void *src, size_t len)
 
     return dest;
 }
+
+static void reverse(char *str, int len)
+{
+    int start = 0;
+    int end = len - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+// Integer to ASCII
+char *itoa(int value, char *buf, int base)
+{
+    int i = 0;
+    int is_negative = 0;
+
+    // 0 is null escape code terminator
+    if (value == 0) {
+        buf[i++] = '0';
+        buf[i] = '\0';
+        return buf;
+    }
+
+    if (value < 0 && base == 10) {
+        is_negative = 1;
+        value = -value;
+    }
+
+    while (value != 0) {
+        // get the base of value.
+        int rem = value % base;
+        if (rem > 9) {
+            buf[i++] =
+                (char)((rem - 10) + 'a'); // hex as remainder is greater than 9,
+        } else {
+            buf[i++] = (char)(rem + '0');
+        }
+        value = value / base;
+    }
+
+    if (is_negative) {
+        buf[i++] = '-';
+    }
+
+    buf[i] = '\0';
+
+    reverse(buf, i);
+    return buf;
+}
