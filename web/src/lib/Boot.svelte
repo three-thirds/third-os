@@ -1,14 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte"
-    import { fade } from 'svelte/transition';
     
-    let bootComplete = false;
+    let bootComplete = $state(false);
 
     const messages = [
         '[0.000000] Booting ThirdOS...',
     ]
 
-    let visibleMessages: string[] = [];
+    let visibleMessages = $state<string[]>([]);
 
     onMount(() => {
         let index=0;
