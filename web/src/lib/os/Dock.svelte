@@ -3,7 +3,7 @@
     import { wm } from './windows.svelte';
 </script>
 
-<nav class="relative z-30 mx-auto mb-4 flex gap-3 rounded-2xl border border-bronze-600 p-3 backdrop-blur">
+<nav class="relative z-30 mx-auto mb-4 flex gap-3 rounded-2x p-3 backdrop-blur rounded-full">
     {#each Object.values(apps) as app}
         {@const running = wm.wins.some(win => win.appId === app.id)}
         <button
@@ -12,7 +12,7 @@
             aria-label={app.title}
             onclick={() => wm.launch(app.id)}
         >
-            {app.icon}
+            <span class="size-7 [&>svg]:size-full">{@html app.icon}</span>
         </button>
     {/each}
 </nav>
