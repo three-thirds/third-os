@@ -24,7 +24,7 @@
         <p class="text-bronze-700/80">S/N</p>
         <button class="text-bronze-700/60" onclick={() => (reveal = !reveal)}>84A6B604D6C69636C2</button>
     </div>
-    <button class="text-sm">version 0.1.14</button>
+    <button class="text-sm">version 0.1.67</button>
     {#if reveal}
     <p class="text-sm">Hey, try <b>Cmd + R</b></p>
     {/if}
