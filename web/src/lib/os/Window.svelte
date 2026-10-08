@@ -26,7 +26,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <section
     in:scale = {{ start: 0.94, duration: 167}}
-    class="pointer-events-auto absolute flex flex-col overflow-hidden rounded-xl border border-bronze-700/20 bg-rich-mahogany-100/70 shadow-lg backdrop-blur"
+    class="pointer-events-auto absolute flex flex-col overflow-hidden rounded-xl border border-bronze-700/20 bg-rich-mahogany-100/92 shadow-lg backdrop-blur-md"
     style:display={win.minimized ? 'none' : undefined}
     style:left={win.maximized ? '0' : `${win.x}px`}
     style:top={win.maximized ? '0' : `${win.y}px`}
