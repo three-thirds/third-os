@@ -8,9 +8,15 @@
 #define KBD_STATUS_PORT 0x64
 #define KBD_STATUS_OUTPUT_FULL 0x01
 
-void keyboard_poll_init(void);
+void keyboard_init(void);
 
-/* Busy-wait until a scancode is available, then return it. */
-uint8_t keyboard_poll(void);
+/* Called from IRQ1 stub. */
+void keyboard_irq_handler(void);
+
+/*
+ * Non-blocking: returns 1 and writes a scancode if the ring buffer
+ * has data, otherwise returns 0.
+ */
+int keyboard_read_scancode(uint8_t *out);
 
 #endif /* KERNEL_KEYBOARD_H */
