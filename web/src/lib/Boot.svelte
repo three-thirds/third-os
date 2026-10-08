@@ -17,7 +17,7 @@
             visibleMessages = [...visibleMessages, messages[index]];
             index++;
             
-            const delay = Math.floor(Math.random() * (500-7+ 1)) + 7;
+            const delay = Math.floor(Math.random() * (25-15+ 1)) + 15;
             timeout = setTimeout(showNext, delay);
         } else {
             timeout = setTimeout(() => {
