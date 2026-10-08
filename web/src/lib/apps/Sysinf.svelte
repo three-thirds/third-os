@@ -4,7 +4,7 @@
     const things: [string, string][] = [
         ['Kernal', 'leaf 6.7.9-arch1-1'],
         ['Build', '26100.autumn.261007-1620'],
-        ['Architecture', 'None'],
+        ['Architecture', 'x86-64'],
         ['Processor', `${navigator.hardwareConcurrency ?? '?'} logical cores`],
         ['Display', `${screen.width}x${screen.height}`],
         ['Shell', 'turtle 116']
