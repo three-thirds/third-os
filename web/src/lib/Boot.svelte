@@ -3,6 +3,8 @@
     
     let bootComplete = $state(false);
 
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     const messages = [
         '[0.000000] Booting ThirdOS kernel 0.1.0...',
         '[0.041284] CPU: Initializing processor...',
@@ -36,23 +38,28 @@
         '[2.241829] System: Startup complete',
     ];
 
-
+    let index = 0;
+    let timeout: ReturnType<typeof setTimeout>
     let visibleMessages = $state<string[]>([]);
 
-    onMount(() => {
-        let index=0;
-
-        const interval = setInterval(() => {
-            if (index < messages.length) {
-                visibleMessages = [...visibleMessages, messages[index]];
-                index++;
-            } else {
-                clearInterval(interval);
+    const showNext = () => {
+        if(index <messages.length) {
+            visibleMessages = [...visibleMessages, messages[index]];
+            index++;
+            
+            const delay = Math.floor(Math.random() * (1000-167+ 1)) + 167;
+            timeout = setTimeout(showNext, delay);
+        } else {
+            timeout = setTimeout(() => {
                 bootComplete = true;
-            }
-        }, 180);
+            }, 1423)
+        }
+    }
 
-        return () => clearInterval(interval);
+
+    onMount(() => {
+        showNext();
+        return () => clearTimeout(timeout);
     })
 </script>
 
@@ -69,7 +76,7 @@
                     Third kernel ready.
                 </div>
                 <div class="mt-4 animate-pulse">
-                    -
+                    _
                 </div>
             {/if}
         </div>
