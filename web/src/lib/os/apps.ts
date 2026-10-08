@@ -1,5 +1,6 @@
 import type { Component } from 'svelte';
 import Sysinf from '../apps/Sysinf.svelte';
+import { AppleDoticon } from 'doticons/16';
 
 export type AppDef = {
     id: string;
@@ -12,5 +13,5 @@ export type AppDef = {
 }
 
 export const apps: Record<string, AppDef> = {
-    sysinf: { id: 'sysinf', title: 'System Info', icon: 'sysinf', component: Sysinf, w: 400, h: 315, single: true },
+    sysinf: { id: 'sysinf', title: 'System Info', icon: AppleDoticon, component: Sysinf, w: 400, h: 315, single: true },
 }
