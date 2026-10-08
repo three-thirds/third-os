@@ -35,4 +35,11 @@ void vga_putc(char c);
 void vga_write(const char *data, size_t length);
 void vga_puts(const char *s);
 
+void vga_get_cursor(size_t *row, size_t *col);
+void vga_enable_cursor(void);
+void vga_disable_cursor(void);
+
+/* Scanline start/end within the character cell (0–15 for VGA text). */
+void vga_set_cursor_shape(uint8_t start, uint8_t end);
+
 #endif /* KERNEL_VGA_H */
