@@ -23,4 +23,40 @@
     const up = () => (drag = null);
 </script>
 
-<App />
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<section
+    in:scale = {{ start: 0.94, duration: 167}}
+    class="pointer-events-autho absolute flex flex-col overflow-hidden rounded-xl border border-bronze-700/20 bg-rich-mahogany-100/70 shadow-lg backdrop-blur"
+    style:display={win.minimized ? 'none' : undefined}
+    style:left={win.maximized ? '0' : `${win.x}px`}
+    style:top={win.maximized ? '0' : `${win.y}px`}
+    style:width={win.maximized ? '0' : `${win.w}px`}
+    style:height={win.maximized ? '0' : `${win.h}px`}
+    style:right={win.maximized ? '0' : undefined}
+    style:bottom={win.maximized ? '6rem' : undefined}
+    style:z-index={win.z}
+    onpointerdown={() => wm.focus(win.id)}
+>
+
+    <!-- this thing is da 3 buttons up top :thumb-up: -->
+    <div
+        class="flex cursor-grab touch-none select-none items-center gap-2 border-b border-bronze-500/20 py-2 active:cursor-grabbing"
+        onpointerdown={down}
+        onpointermove={move}
+        onpointerup={up}
+        onpointercancel={up}
+        ondblclick={() => (win.maximized = !win.maximized)}
+    >
+        <button class="size-3 rounded-full bg-dark-garnet-700" aria-label="Close" onpointerdown={(e) => e.stopPropagation()} onclick={() => wm.close(win.id)}></button>
+        <button class="size-3 rounded-full bg-dark-garnet-700" aria-label="Close" onpointerdown={(e) => e.stopPropagation()} onclick={() => wm.close(win.id)}></button>
+        <button class="size-3 rounded-full bg-dark-garnet-700" aria-label="Close" onpointerdown={(e) => e.stopPropagation()} onclick={() => wm.close(win.id)}></button>
+    </div>
+
+
+    <div class="min-h-0 flex-1 overflow-auto text-bronze-800">
+    <App />
+    </div>
+    
+</section>
+
+
