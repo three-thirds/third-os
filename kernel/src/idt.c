@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "io.h"
 #include "keyboard.h"
+#include "timer.h"
 
 #include <stdint.h>
 
@@ -119,10 +120,10 @@ static void pic_remap(void)
     outb(PIC2_DATA, 0x01);
     io_wait();
 
-    /* Restore masks then leave only IRQ1 (keyboard) unmasked on master. */
+    /* Unmask IRQ0 (timer) and IRQ1 (keyboard) on the master PIC. */
     (void)mask1;
     (void)mask2;
-    outb(PIC1_DATA, 0xFD); /* 11111101b — unmask IRQ1 */
+    outb(PIC1_DATA, 0xFC); /* 11111100b — unmask IRQ0 + IRQ1 */
     outb(PIC2_DATA, 0xFF); /* mask all slave IRQs */
 }
 
@@ -136,7 +137,9 @@ void pic_send_eoi(uint8_t irq)
 
 void irq_dispatch(uint32_t irq)
 {
-    if (irq == 1) {
+    if (irq == 0) {
+        timer_irq_handler();
+    } else if (irq == 1) {
         keyboard_irq_handler();
     }
 
