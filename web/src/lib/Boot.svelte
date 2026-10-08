@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, tick } from "svelte"
     import messages from '../lib/assets/boot.json'
+    import { fade } from 'svelte/transition'
     
     let bootComplete = $state(false);
     let logElement = $state<HTMLElement>();
@@ -44,7 +45,7 @@
 
 
 {#if !bootComplete}
-    <main class="fixed inset-0 z-999 bg-black p-8 font-mono text-sm text-white">
+    <main class="fixed inset-0 z-999 bg-black p-8 font-mono text-sm text-white" out:fade|global={{ duration: 1000 }}>
         <div class = "max-w-3xl max-h-full overflow-y-auto scrollbar-none" bind:this={logElement}>
             {#each visibleMessages as message}
                 <div class="leading-6">{message}</div>
