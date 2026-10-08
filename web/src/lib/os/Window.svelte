@@ -29,9 +29,9 @@
     class="pointer-events-auto absolute flex flex-col overflow-hidden rounded-xl border border-bronze-800/20 bg-rich-mahogany-100/92 shadow-lg backdrop-blur-md"
     style:display={win.minimized ? 'none' : undefined}
     style:left={win.maximized ? '0' : `${win.x}px`}
-    style:top={win.maximized ? '0' : `${win.y}px`}
-    style:width={win.maximized ? '0' : `${win.w}px`}
-    style:height={win.maximized ? '0' : `${win.h}px`}
+    style:top={win.maximized ? '2rem' : `${win.y}px`}
+    style:width={win.maximized ? undefined : `${win.w}px`}
+    style:height={win.maximized ? undefined : `${win.h}px`}
     style:right={win.maximized ? '0' : undefined}
     style:bottom={win.maximized ? '6rem' : undefined}
     style:z-index={win.z}
@@ -48,8 +48,8 @@
         ondblclick={() => (win.maximized = !win.maximized)}
     >
         <button class="size-3 rounded-full bg-dark-garnet-700" aria-label="Close" onpointerdown={(e) => e.stopPropagation()} onclick={() => wm.close(win.id)}></button>
-        <button class="size-3 rounded-full bg-dark-garnet-700" aria-label="Close" onpointerdown={(e) => e.stopPropagation()} onclick={() => wm.close(win.id)}></button>
-        <button class="size-3 rounded-full bg-dark-garnet-700" aria-label="Close" onpointerdown={(e) => e.stopPropagation()} onclick={() => wm.close(win.id)}></button>
+        <button class="size-3 rounded-full bg-bronze-500" aria-label="Min" onpointerdown={(e) => e.stopPropagation()} onclick={() => win.minimized= true}></button>
+        <button class="size-3 rounded-full bg-rust-brown-600" aria-label="Maximize" onpointerdown={(e) => e.stopPropagation()} onclick={() => (win.maximized = !win.maximized)}></button>
     </div>
 
 
