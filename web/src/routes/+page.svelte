@@ -4,6 +4,7 @@
     import Desktop from '../lib/Desktop.svelte';
     import Mist from '../lib/Mist.svelte';
     import Kernal from '../lib/easter_eggs/Kernal.svelte';
+    import Boot from '../lib/Boot.svelte';
 
     let phase = $state<'intro' | 'desktop'>('intro');
     const enter = () => { phase = 'desktop' }
@@ -14,6 +15,8 @@
     onclick={() => phase === 'intro' && !panic && enter()} 
     onkeydown={() => phase === 'intro' && !panic && enter()} 
 />
+
+<Boot />
 
 {#if phase === 'intro'}
     <div class="grain" aria-hidden="true" out:fade={{ duration: 800 }}></div>
