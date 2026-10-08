@@ -12,5 +12,5 @@ export type AppDef = {
 }
 
 export const apps: Record<string, AppDef> = {
-    sysinf: { id: 'sysinf', title: 'System Info', icon: 'sysinf', component: Sysinf, w: 400, h: 300, single: true },
+    sysinf: { id: 'sysinf', title: 'System Info', icon: 'sysinf', component: Sysinf, w: 400, h: 315, single: true },
 }
