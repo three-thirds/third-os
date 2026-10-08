@@ -76,6 +76,20 @@ void vga_putc(char c)
         return;
     }
 
+    if (c == '\b') {
+        if (cursor_col > 0) {
+            cursor_col--;
+        } else if (cursor_row > 0) {
+            cursor_row--;
+            cursor_col = VGA_WIDTH - 1;
+        } else {
+            return;
+        }
+        terminal_buffer[cursor_row * VGA_WIDTH + cursor_col] =
+            vga_entry(' ', terminal_color);
+        return;
+    }
+
     terminal_buffer[cursor_row * VGA_WIDTH + cursor_col] =
         vga_entry((unsigned char)c, terminal_color);
 

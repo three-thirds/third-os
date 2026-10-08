@@ -4,17 +4,20 @@
 #include "keyboard.h"
 #include "vga.h"
 
-static void vga_put_hex8(uint8_t value)
-{
-    static const char hex[] = "0123456789ABCDEF";
+#define LINE_MAX 78
 
-    vga_putc(hex[(value >> 4) & 0x0F]);
-    vga_putc(hex[value & 0x0F]);
+static void prompt(void)
+{
+    vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK));
+    vga_puts("> ");
+    vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK));
 }
 
 void kmain(void)
 {
-    uint8_t scancode;
+    char line[LINE_MAX];
+    size_t len;
+    char c;
 
     cli();
 
@@ -22,7 +25,7 @@ void kmain(void)
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK));
     vga_puts("Third OS\n");
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK));
-    vga_puts("Phase 3: IRQ1 keyboard + hlt idle.\n");
+    vga_puts("Phase 4: type a line, Backspace edits, Enter submits.\n");
 
     gdt_init();
     idt_init();
@@ -30,11 +33,30 @@ void kmain(void)
 
     sti();
 
+    len = 0;
+    prompt();
+
     for (;;) {
-        while (keyboard_read_scancode(&scancode)) {
-            vga_puts("sc: 0x");
-            vga_put_hex8(scancode);
-            vga_putc('\n');
+        while (keyboard_read_char(&c)) {
+            if (c == '\n') {
+                line[len] = '\0';
+                vga_putc('\n');
+                if (len > 0) {
+                    vga_puts("you: ");
+                    vga_puts(line);
+                    vga_putc('\n');
+                }
+                len = 0;
+                prompt();
+            } else if (c == '\b') {
+                if (len > 0) {
+                    len--;
+                    vga_putc('\b');
+                }
+            } else if (c >= 32 && c < 127 && len + 1 < LINE_MAX) {
+                line[len++] = c;
+                vga_putc(c);
+            }
         }
         hlt();
     }

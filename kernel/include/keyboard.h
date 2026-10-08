@@ -19,4 +19,11 @@ void keyboard_irq_handler(void);
  */
 int keyboard_read_scancode(uint8_t *out);
 
+/*
+ * Non-blocking translated input. Returns 1 when a character is produced:
+ * printable ASCII, '\n' (Enter), or '\b' (Backspace). Modifiers and
+ * break codes do not produce characters.
+ */
+int keyboard_read_char(char *out);
+
 #endif /* KERNEL_KEYBOARD_H */
