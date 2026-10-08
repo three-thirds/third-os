@@ -11,6 +11,13 @@
     let qr = $state('');
     let ready = $state(false);
 
+    function lock(e: KeyboardEvent) {
+        const k = e.key.toLowerCase();
+        const reload = k === 'f5' || ((e.metaKey || e.ctrlKey) && k === 'r');
+        if (reload && e.shiftKey) return;
+        e.preventDefault()
+    }
+
     onMount(() => {
         QRCode.toDataURL(url, {
             width: 500,
