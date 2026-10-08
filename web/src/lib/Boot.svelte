@@ -17,7 +17,7 @@
             visibleMessages = [...visibleMessages, messages[index]];
             index++;
             
-            const delay = Math.floor(Math.random() * (50-7+ 1)) + 7;
+            const delay = Math.floor(Math.random() * (500-7+ 1)) + 7;
             timeout = setTimeout(showNext, delay);
         } else {
             timeout = setTimeout(() => {
@@ -45,7 +45,7 @@
 
 {#if !bootComplete}
     <main class="fixed inset-0 z-999 bg-black p-8 font-mono text-sm text-white">
-        <div class = "max-w-3xl max-h-full overflow-y-auto" bind:this={logElement}>
+        <div class = "max-w-3xl max-h-full overflow-y-auto scrollbar-none" bind:this={logElement}>
             {#each visibleMessages as message}
                 <div class="leading-6">{message}</div>
             {/each}
