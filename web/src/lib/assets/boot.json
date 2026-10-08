@@ -116,5 +116,6 @@
   "[1.585829] [ OK ] Services started",
   "[1.601382] [ OK ] Desktop initialized",
   "[1.616829] [ OK ] User session ready",
-  "[1.632382] [ OK ] ThirdOS kernel ready"
+  "[1.632382] [ OK ] ThirdOS kernel ready",
+  "[661656C6025686470256469637E694] [ OK ] Flipped bits not not detected"
 ]
