@@ -12,7 +12,7 @@
             aria-label={app.title}
             onclick={() => wm.launch(app.id)}
         >
-            <span class="size-7 [&>svg]:size-full">{@html app.icon}</span>
+            <span class="size-10 [&>svg]:size-full">{@html app.icon}</span>
         </button>
     {/each}
 </nav>
