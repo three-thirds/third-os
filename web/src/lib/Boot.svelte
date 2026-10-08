@@ -6,7 +6,7 @@
     let bootComplete = $state(false);
     let logElement = $state<HTMLElement>();
 
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    let  { onDone }: { onDone: () => void} = $props();
 
 
     let index = 0;
@@ -23,6 +23,7 @@
         } else {
             timeout = setTimeout(() => {
                 bootComplete = true;
+                onDone();
             }, 1423)
         }
     }

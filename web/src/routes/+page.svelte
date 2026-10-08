@@ -6,7 +6,7 @@
     import Kernal from '../lib/easter_eggs/Kernal.svelte';
     import Boot from '../lib/Boot.svelte';
 
-    let phase = $state<'intro' | 'desktop'>('intro');
+    let phase = $state< 'boot' |'intro' | 'desktop'>('boot');
     const enter = () => { phase = 'desktop' }
     let panic = $state(false)
 </script>
@@ -16,7 +16,7 @@
     onkeydown={() => phase === 'intro' && !panic && enter()} 
 />
 
-<Boot />
+<Boot onDone={() => (phase = 'intro')}/>
 
 {#if phase === 'intro'}
     <div class="grain" aria-hidden="true" out:fade={{ duration: 800 }}></div>
