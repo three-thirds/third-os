@@ -2,6 +2,7 @@ import type { Component } from 'svelte';
 import Sysinf from '../apps/Sysinf.svelte';
 import appleIcon from '../assets/apple.svg?raw';
 import Music from '../apps/Music.svelte';
+import Docs from '../apps/docs/Docs.svelte';
 
 export type AppDef = {
     id: string;
@@ -18,4 +19,5 @@ const musicIcon = 'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/s
 export const apps: Record<string, AppDef> = {
     sysinf: { id: 'sysinf', title: 'System Info', icon: 'https://img.icons8.com/ios-glyphs/60/leaf.png', component: Sysinf, w: 400, h: 315, single: true },
     music: { id: 'music', title: 'Music', icon: musicIcon, component: Music, w: 400, h: 600, single: true },
+    files: { id: 'files', title: 'Files', icon: appleIcon, component: Docs, w: 1000, h: 600, single: true },
 }
