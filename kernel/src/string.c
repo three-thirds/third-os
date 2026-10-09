@@ -20,6 +20,21 @@ int strcmp(const char *s1, const char *s2)
     return (int)(*(unsigned char *)s1 - *(unsigned char *)s2);
 }
 
+int strncmp(const char *s1, const char *s2, int n)
+{
+    while (n > 0 && *s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+        n--;
+    }
+
+    if (n == 0) {
+        return 0;
+    }
+
+    return (int)(*(unsigned char *)s1 - *(unsigned char *)s2);
+}
+
 // fill the memory address data from dest to dest + len with val
 void *memset(void *dest, int val, size_t len)
 {
@@ -33,7 +48,7 @@ void *memset(void *dest, int val, size_t len)
 }
 
 // copy from memory address src to dest till dest + len
-void *memcpy(void *dest, void *src, size_t len)
+void *memcpy(void *dest, const void *src, size_t len)
 {
     unsigned char *d = (unsigned char *)dest;
     const unsigned char *s = (unsigned char *)src;
