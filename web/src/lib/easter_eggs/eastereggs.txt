@@ -57,3 +57,7 @@ to hex:
 ts gonna be simple idk
 
 uhh open the terminal gonna be win+t ?
+
+kernal gonna go err: 
+
+
