@@ -12,3 +12,11 @@
 <button onclick={onBack}>backe</button>
 {folder.name}
 
+{#if file} 
+    <pre>{file.content}</pre>
+{:else}
+    {#each folder.files ?? [] as f}
+        <button onclick={() => onFile(f)}>{f.name}</button>
+    {/each}
+{/if}
+
