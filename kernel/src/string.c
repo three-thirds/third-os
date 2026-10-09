@@ -63,6 +63,7 @@ char *itoa(int value, char *buf, int base)
 {
     int i = 0;
     int is_negative = 0;
+    unsigned int uvalue;
 
     // 0 is null escape code terminator
     if (value == 0) {
@@ -73,19 +74,21 @@ char *itoa(int value, char *buf, int base)
 
     if (value < 0 && base == 10) {
         is_negative = 1;
-        value = -value;
+        uvalue = (unsigned int)(-value);
+    } else {
+        uvalue = (unsigned int)value;
     }
 
-    while (value != 0) {
+    while (uvalue != 0) {
         // get the base of value.
-        int rem = value % base;
+        int rem = uvalue % base;
         if (rem > 9) {
             buf[i++] =
                 (char)((rem - 10) + 'a'); // hex as remainder is greater than 9,
         } else {
             buf[i++] = (char)(rem + '0');
         }
-        value = value / base;
+        uvalue = uvalue / base;
     }
 
     if (is_negative) {
