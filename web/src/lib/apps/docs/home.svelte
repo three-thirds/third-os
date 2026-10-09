@@ -3,8 +3,6 @@
     let { folders, onOpen} : { folders: Folder[]; onOpen: (f: Folder) => void } = $props();
 </script>
 
-boo
-
 {#each folders as folder}
 <button onclick={() => onOpen(folder)}>{folder.name}</button>
 {/each}

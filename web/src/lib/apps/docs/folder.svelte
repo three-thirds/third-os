@@ -19,4 +19,3 @@
         <button onclick={() => onFile(f)}>{f.name}</button>
     {/each}
 {/if}
-
