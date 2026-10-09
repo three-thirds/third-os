@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwind/typography"
 
 @theme {
     --font-doto: 'Doto', monospace;
