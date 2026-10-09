@@ -4,8 +4,24 @@
     import Window from '../lib/os/Window.svelte';
     import { wm } from '../lib/os/windows.svelte';
     import Header from '../lib/os/Header.svelte';
+
+
+    function onKey(e: KeyboardEvent) {
+        const el = e.target as HTMLElement;
+        const typing = el.matches('input, textarea, [contenteditable]')
+        const k = e.key.toLowerCase();
+
+        const hit = 
+            (!typing && e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && k === 't')
+
+        if (hit) {
+            e.preventDefault();
+            wm.launch('terminal');
+        }
+    }
 </script>
 
+<svelte:window on:keydown={onKey} />
 
 <div class="fixed inset-0 flex flex-col">
     <div

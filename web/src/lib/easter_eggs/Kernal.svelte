@@ -45,6 +45,7 @@
 
     <div class="space-y-3 text-sm md:text-base">
       <p class="font-bold">KERNEL PANIC!</p>
+      <p class="uppercase tracking-wide font-serif">boo</p>
       <p>{roast}</p>
     </div>
   </div>
