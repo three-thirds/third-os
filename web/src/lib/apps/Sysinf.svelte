@@ -26,6 +26,6 @@
     </div>
     <button class="text-sm">version 0.1.67</button>
     {#if reveal}
-    <p class="text-sm">Hey, try <b>whatevery i need</b></p>
+    <p class="text-sm">Hey, try <b>Shift + T</b></p>
     {/if}
 </div>
