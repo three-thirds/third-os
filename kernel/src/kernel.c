@@ -3,6 +3,7 @@
 #include "io.h"
 #include "keyboard.h"
 #include "kmalloc.h"
+#include "kprintf.h"
 #include "multiboot.h"
 #include "pmm.h"
 #include "rtc.h"
@@ -67,6 +68,9 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK));
     vga_puts("Third OS\n");
     vga_set_color(vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK));
+    vga_puts("Phase 1: VGA console online.\n");
+    kprintf("Kernel: %s | Status: %c | Memory: %d KB | Magic: 0x%x | 100%%\n",
+            "Third OS", 'A', 1024, 0xCAFEBABE);
 
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         vga_puts("bad multiboot magic\n");

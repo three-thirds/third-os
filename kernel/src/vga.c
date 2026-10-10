@@ -1,5 +1,6 @@
 #include "vga.h"
 #include "io.h"
+#include <stdint.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -198,6 +199,15 @@ void vga_putc(char c)
             vga_entry(' ', terminal_color);
         vga_update_cursor();
         return;
+    }
+
+    if (c == '\b') {
+        if (cursor_col > 0) {
+            cursor_col--;
+            terminal_buffer[cursor_row * VGA_WIDTH + cursor_col] =
+                vga_entry(' ', terminal_color);
+            vga_update_cursor();
+        }
     }
 
     terminal_buffer[cursor_row * VGA_WIDTH + cursor_col] =
