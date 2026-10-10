@@ -10,6 +10,7 @@
 #include "rtc.h"
 #include "timer.h"
 #include "vga.h"
+#include <stddef.h>
 #include <string.h>
 
 #define LINE_MAX 78
@@ -150,6 +151,37 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
                             kprintf("%s\n", content);
                         } else {
                             kprintf("cat: %s: No such file\n", line + 4);
+                        }
+                    } else if (strncmp(line, "write ", 6) == 0) {
+                        const char *args = line + 6;
+                        char filename[FS_MAX_FILENAME];
+                        size_t fn_len = 0;
+
+                        // this one just skips accidental spaces
+                        while (*args == ' ') {
+                            args++;
+                        }
+
+                        while (*args != '\0' && *args != ' ' &&
+                               fn_len < FS_MAX_FILENAME - 1) {
+
+                            filename[fn_len++] = *args++;
+                        }
+                        filename[fn_len] = '\0';
+
+                        // this one skips the space between filename and content
+                        while (*args == ' ') {
+                            args++;
+                        }
+
+                        const char *content = args;
+                        if (fn_len == 0 || *content == '\0') {
+                            kprintf("write: usage: write <fillename> <text>\n");
+                        } else {
+                            if (fs_create(filename, content) == 0) {
+                                kprintf("fs: created %s (%d bytes)\n", filename,
+                                        strlen(content));
+                            }
                         }
                     } else {
                         kprintf("you: %s\n", line);

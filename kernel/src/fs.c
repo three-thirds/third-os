@@ -23,11 +23,20 @@ int fs_create(const char *name, const char *content)
     char *buf;
 
     for (i = 0; i < FS_MAX_FILES; i++) {
-        if (!files[i].is_used) {
+        // means the file already exists
+        if (files[i].is_used && strcmp(files[i].name, name) == 0) {
             break;
         }
     }
 
+    if (i == FS_MAX_FILES) {
+        // create empty slot
+        for (i = 0; i < FS_MAX_FILES; i++) {
+            if (!files[i].is_used) {
+                break;
+            }
+        }
+    }
     if (i == FS_MAX_FILES) {
         kprintf("fs: error. Disk is full (max is 64 files)");
         return -1;
