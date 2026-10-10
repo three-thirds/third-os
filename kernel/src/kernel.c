@@ -1,3 +1,4 @@
+#include "fs.h"
 #include "gdt.h"
 #include "idt.h"
 #include "io.h"
@@ -9,6 +10,8 @@
 #include "rtc.h"
 #include "timer.h"
 #include "vga.h"
+#include <stddef.h>
+#include <string.h>
 
 #define LINE_MAX 78
 
@@ -85,6 +88,7 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
     rtc_init();
     pmm_init(mbi);
     kmalloc_init();
+    fs_init();
     keyboard_init();
     timer_hook_register(tick_hook);
 
@@ -139,9 +143,49 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
                 line[len] = '\0';
                 vga_putc('\n');
                 if (len > 0) {
-                    vga_puts("you: ");
-                    vga_puts(line);
-                    vga_putc('\n');
+                    if (strcmp(line, "ls") == 0) {
+                        fs_list();
+                    } else if (strncmp(line, "cat ", 4) == 0) {
+                        const char *content = fs_read(line + 4);
+                        if (content != NULL) {
+                            kprintf("%s\n", content);
+                        } else {
+                            kprintf("cat: %s: No such file\n", line + 4);
+                        }
+                    } else if (strncmp(line, "write ", 6) == 0) {
+                        const char *args = line + 6;
+                        char filename[FS_MAX_FILENAME];
+                        size_t fn_len = 0;
+
+                        // this one just skips accidental spaces
+                        while (*args == ' ') {
+                            args++;
+                        }
+
+                        while (*args != '\0' && *args != ' ' &&
+                               fn_len < FS_MAX_FILENAME - 1) {
+
+                            filename[fn_len++] = *args++;
+                        }
+                        filename[fn_len] = '\0';
+
+                        // this one skips the space between filename and content
+                        while (*args == ' ') {
+                            args++;
+                        }
+
+                        const char *content = args;
+                        if (fn_len == 0 || *content == '\0') {
+                            kprintf("write: usage: write <fillename> <text>\n");
+                        } else {
+                            if (fs_create(filename, content) == 0) {
+                                kprintf("fs: created %s (%d bytes)\n", filename,
+                                        strlen(content));
+                            }
+                        }
+                    } else {
+                        kprintf("you: %s\n", line);
+                    }
                 }
                 len = 0;
                 prompt();
