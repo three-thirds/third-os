@@ -5,12 +5,14 @@
 #include "keyboard.h"
 #include "kmalloc.h"
 #include "kprintf.h"
+#include "memdump.h"
 #include "multiboot.h"
 #include "pmm.h"
 #include "rtc.h"
 #include "timer.h"
 #include "vga.h"
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #define LINE_MAX 78
@@ -183,6 +185,28 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
                                         strlen(content));
                             }
                         }
+                    } else if (strncmp(line, "dump ", 5) == 0) {
+                        const char *args = line + 5;
+                        while (*args == ' ')
+                            args++;
+
+                        uint32_t addr = parse_hex(args);
+
+                        while (*args != '\0' && *args != ' ')
+                            args++;
+
+                        while (*args == ' ')
+                            args++;
+
+                        uint32_t len = 64;
+                        if (*args != '\0') {
+                            len = parse_hex(args);
+                            if (len == 0) {
+                                len = 64;
+                            }
+                        }
+                        kprintf("Memory dump: 0x%x (%d bytes)\n", addr, len);
+                        dump_memory(addr, len);
                     } else {
                         kprintf("you: %s\n", line);
                     }

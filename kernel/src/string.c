@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 
 size_t strlen(const char *s)
 {
@@ -114,4 +115,32 @@ char *itoa(int value, char *buf, int base)
 
     reverse(buf, i);
     return buf;
+}
+
+uint32_t parse_hex(const char *s)
+{
+    uint32_t result = 0;
+
+    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) {
+        s += 2;
+    }
+
+    while (*s != '\0') {
+        char c = *s;
+        uint32_t digit = 0;
+
+        if (c >= '0' && c <= '9') {
+            digit = (uint32_t)(c - '0');
+        } else if (c >= 'a' && c <= 'f') {
+            digit = (uint32_t)(c - 'a' + 10);
+        } else if (c >= 'A' && c <= 'F') {
+            digit = (uint32_t)(c - 'A' + 10);
+        } else {
+            break;
+        }
+
+        result = (result << 4) | digit;
+        s++;
+    }
+    return result;
 }
