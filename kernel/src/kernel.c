@@ -18,6 +18,7 @@
 #define LINE_MAX 78
 
 static volatile uint32_t hook_hits;
+static struct multiboot_info *boot_mbi;
 
 static void tick_hook(void)
 {
@@ -67,6 +68,7 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
     uint8_t *probe;
     int i;
 
+    boot_mbi = mbi;
     cli();
 
     vga_init();
@@ -207,6 +209,39 @@ void kmain(uint32_t magic, struct multiboot_info *mbi)
                         }
                         kprintf("Memory dump: 0x%x (%d bytes)\n", addr, len);
                         dump_memory(addr, len);
+                    } else if (strcmp(line, "mmap") == 0) {
+                        print_mmap(boot_mbi);
+                    } else if (strcmp(line, "time") == 0) {
+                        struct rtc_time now;
+                        rtc_read(&now);
+                        kprintf("Current time: 20%d-%d-%d %d:%d:%d (UTC)\n",
+                                now.year, now.month, now.day, now.hour,
+                                now.minute, now.second);
+                    } else if (strcmp(line, "uptime") == 0) {
+                        uint32_t sec = timer_ticks() / timer_hz();
+                        uint32_t min = sec / 60;
+                        sec = sec % 60;
+                        kprintf("System uptime: %d min %d sec (ticks: %d)\n",
+                                min, sec, timer_ticks());
+                    } else if (strcmp(line, "help") == 0) {
+                        kprintf("Third OS - Available Commands \n");
+                        kprintf("  help        - List all these commands \n");
+                        kprintf("  clear       - Clears the screen \n");
+                        kprintf("  ls          - List all available files \n");
+                        kprintf("  cat <file>  - Display contents of specified "
+                                "file \n");
+                        kprintf("  write <file> <msg> - Create/overwrite file "
+                                "in RAMFS\n");
+                        kprintf("  dump <addr> [len]  - Inspect physical "
+                                "memory in hex\n");
+                        kprintf("  mmap               - Parse BIOS E820 "
+                                "physical RAM map\n");
+                        kprintf("  time               - Read CMOS Real-Time "
+                                "Clock\n");
+                        kprintf("  uptime             - Show timer ticks and "
+                                "uptime\n");
+                    } else if (strcmp(line, "clear") == 0) {
+                        vga_clear();
                     } else {
                         kprintf("you: %s\n", line);
                     }
