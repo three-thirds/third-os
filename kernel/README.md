@@ -1,156 +1,70 @@
-# Third OS: Kernel Technical Specification & Guide
+# Third OS (32 bit x86 kernel)
 
-This directory contains the 32-bit x86 bare-metal kernel subsystem. The kernel executes in a freestanding environment without access to standard C library runtimes (`libc`) or underlying host OS services.
+A freestanding, 32-bit x86 toy OS built for Third Space.
 
----
-
-## 1. System Specifications
-
-| Parameter           | Specification                                                   |
-| :------------------ | :-------------------------------------------------------------- |
-| **Architecture**    | x86 (IA-32 / 32-bit Protected Mode)                             |
-| **Boot Protocol**   | Multiboot 1 Specification (v0.6.96)                             |
-| **Link Address**    | `0x00100000` (1 MiB boundary)                                   |
-| **Binary Format**   | ELF32 (`elf_i386`)                                              |
-| **Execution State** | Flat memory model, interrupts disabled on boot, paging disabled |
-| **ABI**             | System V i386 ABI                                               |
+The kernel boots into Protected Mode via Multiboot mode. And sets up a hardware-like
+VGA text console, it also provides an in-memory virtual filesyatem (RAMFS), and includes
+some fun debugging utilities like BIOS Memory map walker and Hex dump
 
 ---
 
-## 2. Toolchain & Dependencies
+### Requirements
 
-The build pipeline requires a 32-bit compatible C compiler, NASM, the GNU linker, and QEMU with graphical display support.
-
-### Required Packages:
-
-- **Fedora / RHEL:**
-  ```bash
-  sudo dnf install gcc nasm qemu-system-i386 qemu-ui-gtk genisoimage
-  ```
-- **Debian / Ubuntu:**
-  ```bash
-  sudo apt install build-essential nasm qemu-system-x86 genisoimage
-  ```
-- **Arch Linux:**
-  ```bash
-  sudo pacman -S base-devel nasm qemu-system-x86 cdrtools
-  ```
-
-_Note on Fedora/Wayland:_ If QEMU launches with `VNC server running on ::1:5900` instead of a display window, verify that `qemu-ui-gtk` is installed and supply `-display gtk` to the emulator command.
-
----
-
-## 3. Physical Memory Map
-
-The kernel uses a 1 MiB physical load address to prevent collisions with legacy BIOS structures, memory-mapped device registers, and real-mode vectors below 1 MiB.
-
-```text
-+-----------------------------------+ 0xFFFFFFFF (4 GiB)
-|                                   |
-|      Unmapped / Free RAM          |
-|                                   |
-+-----------------------------------+
-|      Kernel Stack (BSS)           | (Grows downwards)
-+-----------------------------------+
-|      Kernel Image (.text, .data)  | 0x00100000 (1 MiB Link Point)
-+-----------------------------------+
-|      BIOS Reserved / Extended     | 0x000F0000
-+-----------------------------------+
-|      VGA Text Buffer (80x25)      | 0x000B8000 - 0x000BFFFF
-+-----------------------------------+
-|      Conventional Memory (BDA/IVT)| 0x00000000 - 0x00007FFF
-+-----------------------------------+
-```
-
-### Video Display Hardware (`0x000B8000`):
-
-- Memory-mapped text matrix: 80 columns × 25 rows.
-- Each character cell occupies 2 consecutive bytes (16 bits):
-  - **Byte 0 (Bits 0–7):** ASCII character code.
-  - **Byte 1 (Bits 8–15):** Attribute byte (Foreground color: bits 0–3, Background color: bits 4–7).
-
----
-
-## 4. Bootstrapping Sequence
-
-1. **Bootloader Handoff:**
-   - GRUB (or QEMU direct loader) scans the first 8 KiB of `kernel.elf` for the Multiboot header:
-     - `MAGIC`: `0x1BADB002` (4-byte aligned).
-     - `FLAGS`: Flags bitfield.
-     - `CHECKSUM`: `-(MAGIC + FLAGS)`.
-   - The bootloader verifies `MAGIC + FLAGS + CHECKSUM == 0`, enters 32-bit Protected Mode, sets `CS` and `DS` descriptors to flat 4 GiB segments, sets `EAX = 0x2BADB002`, and jumps to the entry point symbol `loader`.
-
-2. **Assembly Setup (`loader.s`):**
-   - Allocates stack memory in the `.bss` section (typically 4–16 KiB).
-   - Points the stack pointer (`ESP`) to the top of the allocated stack block.
-   - Clears `EFLAGS`.
-   - Calls the C entry symbol (`call kmain`).
-
-3. **Kernel Main Execution (`kmain`):**
-   - Initializes core hardware subsystems (VGA buffer, GDT, IDT).
-   - Enters an infinite terminal execution loop (`for(;;)` / `hlt`).
-
----
-
-## 5. Compiler Flags & Constraints
-
-All C source code compiled for the kernel must use freestanding compiler flags:
-
-- **`-m32`**: Targets 32-bit x86 architecture on 64-bit host machines.
-- **`-ffreestanding`**: Instructs GCC that standard library runtime routines do not exist.
-- **`-fno-builtin`**: Prevents the compiler from implicitly replacing loops with calls to library symbols like `memset`, `memcpy`, or `printf`.
-- **`-fno-stack-protector`**: Disables stack-canary checks, which require runtime functions (`__stack_chk_fail`) not yet implemented in the kernel.
-- **`-nostdlib`**: Excludes host runtime initialization objects (`crt0.o`) and standard C libraries (`libc`, `libm`).
-
-### ABI Calling Conventions:
-
-- Arguments are pushed onto the stack in reverse order (right-to-left).
-- Functions preserve `EBX`, `ESI`, `EDI`, and `EBP`.
-- Functions may modify `EAX`, `ECX`, and `EDX`.
-- 32-bit return values are placed in register `EAX`.
-
----
-
-## 6. Build Targets
-
-The `Makefile` in this directory provides the following interfaces:
+To compile and emulate this kernel on Linux:
 
 ```bash
-make          # Compiles all .s and .c files, links kernel.elf
-make run      # Boots kernel.elf directly in QEMU (bypasses ISO generation)
-make iso      # Copies kernel.elf into iso/boot/ and builds os.iso via genisoimage
-make run-iso  # Boots the complete bootable CD-ROM image via GRUB 0.97
-make clean    # Removes all compiled object files, kernel binaries, and ISO images
+# Fedora / RHEL
+sudo dnf install gcc nasm qemu-system-i386 qemu-ui-gtk
+
+# Ubuntu / Debian
+sudo apt install build-essential nasm qemu-system-x86
+
+# Arch Linux
+sudo pacman -S base-devel nasm qemu-system-x86
 ```
+
+### Quickstart
+
+```
+git clone https://github.com/three-thirds/third-os.git
+cd kernel
+make run
+```
+
+Then clean all the artifacts with `make clean`
 
 ---
 
-## 7. Directory Layout & Module Structure
+### Basic Architecture
 
-```text
-kernel/
-├── Makefile            # Build orchestration & dependency graph
-├── link.ld             # Linker script specifying physical memory sections
-├── loader.s            # Multiboot header and assembly stack initialization
-├── include/            # Kernel header declarations (.h)
-│   ├── vga.h           # VGA colors, screen dimensions, driver signatures
-│   └── io.h            # In/Out assembly port primitives
-├── src/                # Kernel C source files (.c)
-│   ├── kmain.c         # Primary kernel entry point
-│   └── vga.c           # Memory-mapped console driver
-└── iso/                # El Torito ISO staging directory
-    └── boot/
-        ├── grub/
-        │   ├── menu.lst        # GRUB runtime configuration
-        │   └── stage2_eltorito # El Torito bootloader binary (~103 KB)
-        └── kernel.elf          # Output kernel binary
-```
+1. ENTRY POINT
+   a. Multiboot specification: So the multiboot works from a simple assembly file which gives
+   the OS it's magic number So that bootloader can verify the OS
+   b. Physical Linking point: The binary had to be linked specifically at 0x0010000(1MB) boundary
+   to avoid collisions with BIOS stuff
+   c. ABI Stack Setup: Allocates a 16KB Stack in .bss, initializes `ESP`, pushes multiboot pointer and executes kmain()
+
+2. VGA rendering stuff
+   a. Directly writes VGA frame buffer at 0x000B8000, it like sends 2 bytes per cell, one for actual ASCII and another is
+   maybe color info(idk Devaansh wrote it)
+   b. CRTC Hardware cursor: Uses outb to connect to VGA I/O ports where:
+   - port `0x3D4` - is for cursor
+   - port `0x3D5` - 8-bit Data transfer port
+   - And automatically handles backspace, newspace, etc.
+
+3. Freestanding standard library
+   Because kernel runs without libc, essential memory and string routines were implemented from scratch.
+
+- String primitives like `strcmp`, `strlen`, `strncmp`, `memset` and `memcpy` are written by yours truly @Chish.
+- Convert 32-bit signed base 10 integers to ASCII.
+- kprintf() can print:
+
+* %s - strings
+* %c - single characters
+* %d - signed decimal
+* %x - unsigned lowercase decimal
+* %% - literal percentage
 
 ---
 
-## 8. Contributor Rules & Practices
-
-1. **No Implicit Library Calls:** Always implement or explicitly declare your helper functions. Do not include `<stdio.h>`, `<stdlib.h>`, or `<string.h>`.
-2. **Hardware I/O Isolation:** Hardware port communication (`inb`, `outb`) must use inline assembly routines wrapped inside `include/io.h`.
-3. **Linker Script Awareness:** Any new initialized global data belongs in `.data`; uninitialized buffers must be placed in `.bss`. Do not assume RAM is zeroed unless placed in `.bss`.
-4. **Bootloader File Integrity:** Do not replace `iso/boot/grub/stage2_eltorito` with arbitrary GRUB binaries. The binary must strictly be the 103 KB El Torito stage 2 binary to ensure correct BIOS `INT 13h` relocation parsing.
+I am too lazy to write anymore docs, I got my 10 hours logged :p
