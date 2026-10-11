@@ -4,6 +4,7 @@ import appleIcon from '../assets/apple.svg?raw';
 import Music from '../apps/Music.svelte';
 import Docs from '../apps/docs/Docs.svelte';
 import Terminal from '../apps/Terminal.svelte';
+import tempDocs from '../apps/temp/Docs.svelte';
 
 export type AppDef = {
     id: string;
@@ -23,4 +24,5 @@ export const apps: Record<string, AppDef> = {
     music: { id: 'music', title: 'Music', icon: musicIcon, component: Music, w: 400, h: 600, single: true, hidden: false },
     files: { id: 'files', title: 'Files', icon: appleIcon, component: Docs, w: 1000, h: 600, single: true, hidden: false },
     terminal: { id: 'terminal', title: 'Terminal', icon: '', component: Terminal, w: 400, h: 300, single: true, hidden: true },
+    docs: { id: 'docs', title: 'Docs', icon: '', component: tempDocs, w: 1000, h: 700, single: true, hidden: false }
 }
