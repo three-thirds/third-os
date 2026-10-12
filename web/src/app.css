@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+    --font-doto: 'Doto', monospace;
+    --animate-mist: mist 1.8s cubic-bezier(0.2,0.6,2,1) both;
+    --animate-drift: drift 24s ease-in-out infinite alternate;
+
+    @keyframes mist {
+        from { opacity: 0; filter: blur(14px); font-weight:100; translate: 0 6px; scale: 1.08; }
+        to { opacity: 1; filter: blur(0); font-weight:700; translate: 0 0; scale: 1; }
+    }
+
+    @keyframes drift {
+        from { transform: translate(-6%, -4%) scale(1);}
+        to { transform: translate(6%, 4%) scale(1.16); }
+    }
+    
+    --color-rich-mahogany: #3c1518;
+    --color-rich-mahogany-100: #0c0405;
+    --color-rich-mahogany-200: #18080a;
+    --color-rich-mahogany-300: #240d0f;
+    --color-rich-mahogany-400: #301114;
+    --color-rich-mahogany-500: #3c1518;
+    --color-rich-mahogany-600: #7c2b32;
+    --color-rich-mahogany-700: #bb424c;
+    --color-rich-mahogany-800: #d28087;
+    --color-rich-mahogany-900: #e9c0c3;
+
+    --color-dark-garnet: #69140e;
+    --color-dark-garnet-100: #150403;
+    --color-dark-garnet-200: #290806;
+    --color-dark-garnet-300: #3e0c08;
+    --color-dark-garnet-400: #53100b;
+    --color-dark-garnet-500: #69140e;
+    --color-dark-garnet-600: #ac2118;
+    --color-dark-garnet-700: #e33c30;
+    --color-dark-garnet-800: #ec7d75;
+    --color-dark-garnet-900: #f6beba;
+
+    --color-rust-brown: #a44200;
+    --color-rust-brown-100: #210d00;
+    --color-rust-brown-200: #411a00;
+    --color-rust-brown-300: #622700;
+    --color-rust-brown-400: #833400;
+    --color-rust-brown-500: #a44200;
+    --color-rust-brown-600: #e95d00;
+    --color-rust-brown-700: #ff822f;
+    --color-rust-brown-800: #ffac74;
+    --color-rust-brown-900: #ffd5ba;
+
+    --color-bronze: #d58936;
+    --color-bronze-100: #2c1b09;
+    --color-bronze-200: #583613;
+    --color-bronze-300: #83511c;
+    --color-bronze-400: #af6c25;
+    --color-bronze-500: #d58936;
+    --color-bronze-600: #dd9f5d;
+    --color-bronze-700: #e5b786;
+    --color-bronze-800: #eecfae;
+    --color-bronze-900: #f6e7d7;
+
+}
+
+body {
+    background: var(--color-rich-mahogany-200);
+    color: var(--color-bronze-700)
+}
+
+.grain {
+    position: fixed;
+    inset: -50%;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.67;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1 0 0 0 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    animation: grain 1.6s steps(1) infinite;
+}
+
+@keyframes grain {
+0%   { transform: translate(0, 0); }
+20%  { transform: translate(-6%, -9%); }
+40%  { transform: translate(7%, 4%); }
+60%  { transform: translate(-3%, 8%); }
+80%  { transform: translate(5%, -6%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.grain { animation: none; }
+}

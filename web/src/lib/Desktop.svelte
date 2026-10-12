@@ -1,0 +1,45 @@
+<script lang="ts">
+    import Leavesinf from './Leaves_infinite.svelte';
+    import Dock from '../lib/os/Dock.svelte';
+    import Window from '../lib/os/Window.svelte';
+    import { wm } from '../lib/os/windows.svelte';
+    import Header from '../lib/os/Header.svelte';
+
+
+    function onKey(e: KeyboardEvent) {
+        const el = e.target as HTMLElement;
+        const typing = el.matches('input, textarea, [contenteditable]')
+        const k = e.key.toLowerCase();
+
+        const hit = 
+            (!typing && e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && k === 't')
+
+        if (hit) {
+            e.preventDefault();
+            wm.launch('terminal');
+        }
+    }
+</script>
+
+<svelte:window on:keydown={onKey} />
+
+<div class="fixed inset-0 flex flex-col">
+    <div
+        class = "absolute inset-0 bg-cover bg-center"
+        style="background-image: url('https://cdn.hackclub.com/01a11608-a876-780b-86ff-44d23e9d701b/360_F_617793807_ogJx15srsWoYxObjTsjDfZ3xrOJrjvqG.jpg')"
+        aria-hidden="true"
+    ></div>
+
+    <div class="absolute inset-0 bg-rich-mahogany-100/50" aria-hidden="true"></div>
+    <Leavesinf count={67} />
+    <Header />
+    <div class="relative z-10 flex-1"></div>
+    <Dock />
+
+    <div class="pointer-events-none fixed inset-0 z-20">
+        {#each wm.wins as win (win.id)}
+            <Window {win} />
+        {/each}
+    </div>
+</div>
+
