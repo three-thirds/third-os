@@ -2,6 +2,29 @@
 
 This directory contains the 32-bit x86 bare-metal kernel subsystem. The kernel executes in a freestanding environment without access to standard C library runtimes (`libc`) or underlying host OS services.
 
+## Quick Start
+
+To test it out without building, you need to install QEMU
+
+1. Install QEMU:
+   - **Fedora:** `sudo dnf install qemu-system-i386 qemu-ui-gtk`
+   - **Debian / Ubuntu:** `sudo apt install qemu-system-x86`
+   - **Arch:** `sudo pacman -S qemu-system-x86`
+   - **Windows / macOS:** install from [qemu.org/download](https://www.qemu.org/download/)
+
+2. Download `os.iso` from the [Releases page](https://github.com/three-thirds/third-os/releases/latest).
+
+3. Boot it:
+   ```bash
+   qemu-system-i386 -cdrom os.iso -display gtk
+   ```
+
+   On Windows/macOS, if `-display gtk` isn't available in your build, drop that flag and QEMU will pick its default display.
+
+To exit, close the QEMU window (or press `Ctrl+Alt+G` to release the mouse first if it's grabbed).
+
+Want to build it yourself? See [Build Targets](#6-build-targets).
+
 ---
 
 ## 1. System Specifications
@@ -116,41 +139,11 @@ All C source code compiled for the kernel must use freestanding compiler flags:
 The `Makefile` in this directory provides the following interfaces:
 
 ```bash
-make          # Compiles all .s and .c files, links kernel.elf
-make run      # Boots kernel.elf directly in QEMU (bypasses ISO generation)
-make iso      # Copies kernel.elf into iso/boot/ and builds os.iso via genisoimage
-make run-iso  # Boots the complete bootable CD-ROM image via GRUB 0.97
-make clean    # Removes all compiled object files, kernel binaries, and ISO images
+make              # Compiles all .s and .c files, links kernel.elf (debug build)
+make run          # Boots kernel.elf directly in QEMU (bypasses ISO generation)
+make iso          # Copies kernel.elf into iso/boot/ and builds os.iso via genisoimage
+make run-iso      # Boots the complete bootable CD-ROM image via GRUB 0.97
+make release      # Clean rebuild with -O2 and stripped symbols, produces os.iso
+make run-release  # Builds the release ISO and boots it in QEMU
+make clean        # Removes all compiled object files, kernel binaries, and ISO images
 ```
-
----
-
-## 7. Directory Layout & Module Structure
-
-```text
-kernel/
-├── Makefile            # Build orchestration & dependency graph
-├── link.ld             # Linker script specifying physical memory sections
-├── loader.s            # Multiboot header and assembly stack initialization
-├── include/            # Kernel header declarations (.h)
-│   ├── vga.h           # VGA colors, screen dimensions, driver signatures
-│   └── io.h            # In/Out assembly port primitives
-├── src/                # Kernel C source files (.c)
-│   ├── kmain.c         # Primary kernel entry point
-│   └── vga.c           # Memory-mapped console driver
-└── iso/                # El Torito ISO staging directory
-    └── boot/
-        ├── grub/
-        │   ├── menu.lst        # GRUB runtime configuration
-        │   └── stage2_eltorito # El Torito bootloader binary (~103 KB)
-        └── kernel.elf          # Output kernel binary
-```
-
----
-
-## 8. Contributor Rules & Practices
-
-1. **No Implicit Library Calls:** Always implement or explicitly declare your helper functions. Do not include `<stdio.h>`, `<stdlib.h>`, or `<string.h>`.
-2. **Hardware I/O Isolation:** Hardware port communication (`inb`, `outb`) must use inline assembly routines wrapped inside `include/io.h`.
-3. **Linker Script Awareness:** Any new initialized global data belongs in `.data`; uninitialized buffers must be placed in `.bss`. Do not assume RAM is zeroed unless placed in `.bss`.
-4. **Bootloader File Integrity:** Do not replace `iso/boot/grub/stage2_eltorito` with arbitrary GRUB binaries. The binary must strictly be the 103 KB El Torito stage 2 binary to ensure correct BIOS `INT 13h` relocation parsing.

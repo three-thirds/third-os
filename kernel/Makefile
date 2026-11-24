@@ -22,6 +22,13 @@ CFLAGS  := $(CFLAGS_TARGET) \
            -Wall \
            -Wextra \
            -Iinclude
+# Debug by default, optimized + stripped when RELEASE=1
+ifdef RELEASE
+  CFLAGS  += -O2
+  LDFLAGS += -s
+else
+  CFLAGS  += -g -O0
+endif
 
 ASFLAGS := -f elf32
 LDFLAGS := -m elf_i386 -T linker.ld -nostdlib --entry=loader
@@ -35,7 +42,7 @@ ASM_OBJS := $(ASM_SRCS:.s=.o)
 KERNEL := kernel.elf
 ISO := os.iso
 
-.PHONY: all run run-iso iso clean
+.PHONY: all run run-iso iso release run-release clean
 
 all: $(KERNEL)
 
@@ -63,11 +70,20 @@ $(ISO): $(KERNEL)
 		-o $(ISO) \
 		iso
 
+clean:
+	rm -f $(KERNEL) $(ISO) $(C_OBJS) $(ASM_OBJS) iso/boot/kernel.elf
+
 run: $(KERNEL)
 	$(QEMU) -kernel $(KERNEL) -display gtk
 
 run-iso: $(ISO)
 	$(QEMU) -cdrom $(ISO) -display gtk
 
-clean:
-	rm -f $(KERNEL) $(ISO) $(C_OBJS) $(ASM_OBJS) iso/boot/kernel.elf
+# Clean rebuild with optimizations, produces a stripped os.iso
+release:
+	$(MAKE) clean
+	$(MAKE) iso RELEASE=1
+
+# Build release and boot it in QEMU
+run-release: release
+	$(QEMU) -cdrom $(ISO) -display gtk
